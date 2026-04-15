@@ -1,0 +1,85 @@
+{
+	"name": "dataflow with exist transformation activity",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "ds_adls_source_orderdata",
+						"type": "DatasetReference"
+					},
+					"name": "orderdata"
+				},
+				{
+					"dataset": {
+						"referenceName": "ds_adls_source_orderdata",
+						"type": "DatasetReference"
+					},
+					"name": "customerdata"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "ds_adls_targetfolder",
+						"type": "DatasetReference"
+					},
+					"name": "sink1",
+					"description": "customers exists in customer data,\n\nhere I am doing joining left stream and right stream output contains leftstream values which contains in right stream values, inner join but rightstream column values ravu only left strem vostai"
+				}
+			],
+			"transformations": [
+				{
+					"name": "exists1"
+				}
+			],
+			"scriptLines": [
+				"parameters{",
+				"     orderfile as string ('order.csv'),",
+				"     customerfile as string ('customer.csv')",
+				"}",
+				"source(output(",
+				"          OrderID as short,",
+				"          CustomerID as short,",
+				"          OrderDate as date,",
+				"          Amount as short",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false,",
+				"     wildcardPaths:[(concat('input/',$orderfile))]) ~> orderdata",
+				"source(output(",
+				"          CustomerID as short,",
+				"          Name as string,",
+				"          City as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false,",
+				"     wildcardPaths:[(concat('input/',$customerfile))]) ~> customerdata",
+				"orderdata, customerdata exists(orderdata@CustomerID == customerdata@CustomerID,",
+				"     negate:false,",
+				"     partitionBy('hash', 1),",
+				"     broadcast: 'auto')~> exists1",
+				"exists1 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          {1} as string,",
+				"          {2} as string,",
+				"          {Quest Q64 10 FT. x 10 FT. Slant Leg Instant U} as string,",
+				"          Prop_3 as string,",
+				"          {59.98} as string,",
+				"          {http://images.acmesports.sports/Quest+Q64+10+FT.+x+10+FT.+Slant+Leg+Instant+Up+Canopy} as string",
+				"     ),",
+				"     partitionFileNames:['customerexistorder.csv'],",
+				"     umask: 0022,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> sink1"
+			]
+		}
+	}
+}
