@@ -31,6 +31,26 @@
 				}
 			}
 		],
+		"parameters": {
+			"orderfile": {
+				"type": "string",
+				"defaultValue": "order.csv"
+			},
+			"customerfile": {
+				"type": "string",
+				"defaultValue": "customer.csv"
+			}
+		},
+		"variables": {
+			"orderfile": {
+				"type": "String",
+				"defaultValue": "order.csv"
+			},
+			"customerfile": {
+				"type": "String",
+				"defaultValue": "customer.csv"
+			}
+		},
 		"annotations": []
 	}
 }
