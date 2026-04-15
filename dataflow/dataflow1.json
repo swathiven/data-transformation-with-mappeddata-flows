@@ -35,8 +35,8 @@
 			],
 			"scriptLines": [
 				"parameters{",
-				"     file1 as string ('order1.csv'),",
-				"     file2 as string ('order2.csv')",
+				"     file1 as string,",
+				"     file2 as string",
 				"}",
 				"source(output(",
 				"          Customer_Name as string,",
