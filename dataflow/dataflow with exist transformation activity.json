@@ -36,8 +36,8 @@
 			],
 			"scriptLines": [
 				"parameters{",
-				"     orderfile as string ('order.csv'),",
-				"     customerfile as string ('customer.csv')",
+				"     orderfile as string,",
+				"     customerfile as string",
 				"}",
 				"source(output(",
 				"          OrderID as short,",
