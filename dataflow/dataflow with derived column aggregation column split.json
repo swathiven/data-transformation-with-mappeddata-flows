@@ -1,5 +1,5 @@
 {
-	"name": "dataflow1",
+	"name": "dataflow with derived column aggregation column split",
 	"properties": {
 		"type": "MappingDataFlow",
 		"typeProperties": {
@@ -96,8 +96,10 @@
 				"     {Total-orders-count} = count(OrderID),",
 				"     partitionBy('hash', 1)) ~> aggregate1",
 				"aggregate1 split(equals(toString({Total-orders-count}), '1'),",
+				"     ERROR_FUNCTION(''),",
+				"     ERROR_FUNCTION(''),",
 				"     equals(toString({Total-orders-count}), '2'),",
-				"     disjoint: false) ~> SplitBasedOrders@(ordercount1, ordercount2)",
+				"     disjoint: false) ~> SplitBasedOrders@(ordercount1, , , ordercount2)",
 				"select1 derive(Customer_Name = upper(Customer_Name),",
 				"          ordercategory = iif(Amount > 150, \"High\", \"Low\")) ~> derivedColumn1",
 				"SplitBasedOrders@ordercount1 sink(allowSchemaDrift: true,",
