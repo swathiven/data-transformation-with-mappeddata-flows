@@ -39,10 +39,12 @@
 		],
 		"parameters": {
 			"ordefile": {
-				"type": "string"
+				"type": "string",
+				"defaultValue": "order.csv"
 			},
 			"custfile": {
-				"type": "string"
+				"type": "string",
+				"defaultValue": "customer.csv"
 			}
 		},
 		"annotations": [],
