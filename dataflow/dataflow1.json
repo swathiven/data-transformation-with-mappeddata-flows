@@ -13,10 +13,10 @@
 				},
 				{
 					"dataset": {
-						"referenceName": "ds_adls_source_customerdata",
+						"referenceName": "ds_adls_source_orderdata",
 						"type": "DatasetReference"
 					},
-					"name": "customer"
+					"name": "Customer"
 				}
 			],
 			"sinks": [
@@ -26,6 +26,13 @@
 						"type": "DatasetReference"
 					},
 					"name": "sink1"
+				},
+				{
+					"dataset": {
+						"referenceName": "ds_adls_targetfolder",
+						"type": "DatasetReference"
+					},
+					"name": "sink2"
 				}
 			],
 			"transformations": [
@@ -36,16 +43,16 @@
 					"name": "select1"
 				},
 				{
-					"name": "filter1"
+					"name": "aggregate1"
 				},
 				{
-					"name": "aggregate1"
+					"name": "SplitBasedOrders"
 				}
 			],
 			"scriptLines": [
 				"parameters{",
-				"     ordersFile as string,",
-				"     customerFile as string",
+				"     ordersFile as string ('order.csv'),",
+				"     customerFile as string ('customer.csv')",
 				"}",
 				"source(output(",
 				"          OrderID as short,",
@@ -65,8 +72,8 @@
 				"     allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     ignoreNoFilesFound: false,",
-				"     wildcardPaths:[(concat('input/',$customerFile))]) ~> customer",
-				"Order, customer join(Order@CustomerID == customer@CustomerID,",
+				"     wildcardPaths:[(concat('input/', $customerFile))]) ~> Customer",
+				"Order, Customer join(Order@CustomerID == Customer@CustomerID,",
 				"     joinType:'inner',",
 				"     matchType:'exact',",
 				"     ignoreSpaces: false,",
@@ -76,18 +83,19 @@
 				"          OrderID,",
 				"          OrderDate,",
 				"          Amount,",
-				"          Name,",
+				"          Customer_Name = Name,",
 				"          City",
 				"     ),",
 				"     partitionBy('hash', 1),",
 				"     skipDuplicateMapInputs: true,",
 				"     skipDuplicateMapOutputs: true) ~> select1",
-				"select1 filter(Amount>150,",
-				"     partitionBy('hash', 1)) ~> filter1",
-				"filter1 aggregate(groupBy(City),",
-				"     Totalcount = count(OrderID),",
+				"select1 aggregate(groupBy(Customer_Name),",
+				"     {Total-orders-count} = count(OrderID),",
 				"     partitionBy('hash', 1)) ~> aggregate1",
-				"aggregate1 sink(allowSchemaDrift: true,",
+				"aggregate1 split(equals(toString({Total-orders-count}), '1'),",
+				"     equals(toString({Total-orders-count}), '2'),",
+				"     disjoint: false) ~> SplitBasedOrders@(ordercount1, ordercount2)",
+				"SplitBasedOrders@ordercount1 sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     input(",
 				"          {1} as string,",
@@ -97,13 +105,34 @@
 				"          {59.98} as string,",
 				"          {http://images.acmesports.sports/Quest+Q64+10+FT.+x+10+FT.+Slant+Leg+Instant+Up+Canopy} as string",
 				"     ),",
-				"     partitionFileNames:['total.csv'],",
+				"     partitionFileNames:['order1.csv'],",
 				"     umask: 0022,",
 				"     preCommands: [],",
 				"     postCommands: [],",
 				"     skipDuplicateMapInputs: true,",
 				"     skipDuplicateMapOutputs: true,",
-				"     partitionBy('hash', 1)) ~> sink1"
+				"     mapColumn(",
+				"          {1} = Customer_Name,",
+				"          {2} = {Total-orders-count}",
+				"     ),",
+				"     partitionBy('hash', 1)) ~> sink1",
+				"SplitBasedOrders@ordercount2 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          {1} as string,",
+				"          {2} as string,",
+				"          {Quest Q64 10 FT. x 10 FT. Slant Leg Instant U} as string,",
+				"          Prop_3 as string,",
+				"          {59.98} as string,",
+				"          {http://images.acmesports.sports/Quest+Q64+10+FT.+x+10+FT.+Slant+Leg+Instant+Up+Canopy} as string",
+				"     ),",
+				"     partitionFileNames:['order2.csv'],",
+				"     umask: 0022,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> sink2"
 			]
 		}
 	}
