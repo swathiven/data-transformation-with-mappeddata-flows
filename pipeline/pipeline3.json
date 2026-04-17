@@ -20,7 +20,20 @@
 						"type": "DataFlowReference",
 						"datasetParameters": {
 							"customer": {
-								"DSfilename": "'order.csv4'"
+								"DSfilename": {
+									"value": "@pipeline().parameters.PL_twitterfile",
+									"type": "Expression"
+								},
+								"DSFolder": {
+									"value": "@pipeline().parameters.PL_twitterfolder",
+									"type": "Expression"
+								}
+							},
+							"sink1": {
+								"tablename": {
+									"value": "@pipeline().parameters.PL_twittertablename",
+									"type": "Expression"
+								}
 							}
 						}
 					},
@@ -56,7 +69,20 @@
 						"type": "DataFlowReference",
 						"datasetParameters": {
 							"customer": {
-								"DSfilename": "'order.csv4'"
+								"DSfilename": {
+									"value": "@pipeline().parameters.PL_whatsappfile",
+									"type": "Expression"
+								},
+								"DSFolder": {
+									"value": "@pipeline().parameters.PL_whatsappfolder",
+									"type": "Expression"
+								}
+							},
+							"sink1": {
+								"tablename": {
+									"value": "@pipeline().parameters.PL_whatsapptablename",
+									"type": "Expression"
+								}
 							}
 						}
 					},
@@ -69,12 +95,29 @@
 			}
 		],
 		"parameters": {
-			"inputfile": {
+			"PL_twitterfolder": {
 				"type": "string",
-				"defaultValue": "customer.csv"
+				"defaultValue": "customerQueries/Twitter/"
 			},
-			"tablename": {
-				"type": "string"
+			"PL_twitterfile": {
+				"type": "string",
+				"defaultValue": "TwitterCustomers.csv"
+			},
+			"PL_whatsappfolder": {
+				"type": "string",
+				"defaultValue": "ccustomerQueries/whatsApp/"
+			},
+			"PL_whatsappfile": {
+				"type": "string",
+				"defaultValue": "WACustomers.xyz"
+			},
+			"PL_twittertablename": {
+				"type": "string",
+				"defaultValue": "Twitter"
+			},
+			"PL_whatsapptablename": {
+				"type": "string",
+				"defaultValue": "whatsapp"
 			}
 		},
 		"annotations": []

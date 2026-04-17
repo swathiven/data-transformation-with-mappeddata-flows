@@ -1,5 +1,5 @@
 {
-	"name": "Genric_Read_CSV_Write_to_DB",
+	"name": "dataflow2",
 	"properties": {
 		"type": "MappingDataFlow",
 		"typeProperties": {
@@ -9,7 +9,7 @@
 						"referenceName": "ds_adls_source_customerdata",
 						"type": "DatasetReference"
 					},
-					"name": "customer"
+					"name": "source1"
 				}
 			],
 			"sinks": [
@@ -23,22 +23,21 @@
 			],
 			"transformations": [
 				{
-					"name": "alterRow1"
+					"name": "filter1"
 				}
 			],
 			"scriptLines": [
 				"source(output(",
+				"          OrderID as short,",
 				"          CustomerID as short,",
-				"          Name as string,",
-				"          City as string",
+				"          OrderDate as date,",
+				"          Amount as short",
 				"     ),",
 				"     allowSchemaDrift: true,",
 				"     validateSchema: false,",
-				"     ignoreNoFilesFound: false,",
-				"     rowUrlColumn: 'fileName') ~> customer",
-				"customer alterRow(insertIf(equals(City, 'Brisbane')),",
-				"     partitionBy('hash', 1)) ~> alterRow1",
-				"alterRow1 sink(allowSchemaDrift: true,",
+				"     ignoreNoFilesFound: false) ~> source1",
+				"source1 filter(Amount>150) ~> filter1",
+				"filter1 sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     deletable:false,",
 				"     insertable:true,",
@@ -48,8 +47,14 @@
 				"     format: 'table',",
 				"     skipDuplicateMapInputs: true,",
 				"     skipDuplicateMapOutputs: true,",
-				"     saveOrder: 1,",
-				"     errorHandlingOption: 'stopOnFirstError') ~> sink1"
+				"     errorHandlingOption: 'stopOnFirstError',",
+				"     mapColumn(",
+				"          OrderID,",
+				"          CustomerID,",
+				"          OrderDate,",
+				"          Amount",
+				"     ),",
+				"     partitionBy('hash', 1)) ~> sink1"
 			]
 		}
 	}

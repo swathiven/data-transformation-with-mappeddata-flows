@@ -1,0 +1,54 @@
+{
+	"name": "pipeline4",
+	"properties": {
+		"activities": [
+			{
+				"name": "Data flow1",
+				"type": "ExecuteDataFlow",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"dataflow": {
+						"referenceName": "dataflow2",
+						"type": "DataFlowReference",
+						"datasetParameters": {
+							"source1": {
+								"DSfilename": {
+									"value": "@pipeline().parameters.PL_inputfile",
+									"type": "Expression"
+								},
+								"DSFolder": {
+									"value": "@pipeline().parameters.PL_inputfolder",
+									"type": "Expression"
+								}
+							}
+						}
+					},
+					"compute": {
+						"coreCount": 8,
+						"computeType": "General"
+					},
+					"traceLevel": "Fine"
+				}
+			}
+		],
+		"parameters": {
+			"PL_inputfolder": {
+				"type": "string",
+				"defaultValue": "input"
+			},
+			"PL_inputfile": {
+				"type": "string",
+				"defaultValue": "order.csv"
+			}
+		},
+		"annotations": []
+	}
+}
