@@ -3,7 +3,7 @@
 	"properties": {
 		"activities": [
 			{
-				"name": "Data flow1",
+				"name": "FromTwitter",
 				"type": "ExecuteDataFlow",
 				"dependsOn": [],
 				"policy": {
@@ -16,17 +16,47 @@
 				"userProperties": [],
 				"typeProperties": {
 					"dataflow": {
-						"referenceName": "dataflow2",
+						"referenceName": "Genric_Read_CSV_Write_to_DB",
 						"type": "DataFlowReference",
 						"datasetParameters": {
-							"source1": {
-								"DSfilename": "'order.csv'"
-							},
-							"sink1": {
-								"tablename": {
-									"value": "@pipeline().parameters.tablename",
-									"type": "Expression"
-								}
+							"customer": {
+								"DSfilename": "'order.csv4'"
+							}
+						}
+					},
+					"compute": {
+						"coreCount": 8,
+						"computeType": "General"
+					},
+					"traceLevel": "Fine"
+				}
+			},
+			{
+				"name": "FromWhatsApp",
+				"type": "ExecuteDataFlow",
+				"dependsOn": [
+					{
+						"activity": "FromTwitter",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"dataflow": {
+						"referenceName": "Genric_Read_CSV_Write_to_DB",
+						"type": "DataFlowReference",
+						"datasetParameters": {
+							"customer": {
+								"DSfilename": "'order.csv4'"
 							}
 						}
 					},
