@@ -20,27 +20,12 @@
 						"type": "DataFlowReference",
 						"datasetParameters": {
 							"source1": {
-								"filename": "'order.csv'"
+								"DSfilename": "'order.csv'"
 							},
 							"sink1": {
 								"tablename": {
 									"value": "@pipeline().parameters.tablename",
 									"type": "Expression"
-								}
-							}
-						},
-						"linkedServiceParameters": {
-							"source1": {
-								"schemaLinkedService": {
-									"filename": "'order.csv'"
-								}
-							},
-							"sink1": {
-								"schemaLinkedService": {
-									"tablename": {
-										"value": "@pipeline().parameters.tablename",
-										"type": "Expression"
-									}
 								}
 							}
 						}
