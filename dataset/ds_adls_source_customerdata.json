@@ -8,7 +8,10 @@
 		"parameters": {
 			"DSfilename": {
 				"type": "string",
-				"defaultValue": "'order.csv'"
+				"defaultValue": "'order.csv4'"
+			},
+			"DSFolder": {
+				"type": "String"
 			}
 		},
 		"annotations": [],
@@ -20,7 +23,10 @@
 					"value": "@dataset().DSfilename",
 					"type": "Expression"
 				},
-				"folderPath": "input",
+				"folderPath": {
+					"value": "@dataset().DSFolder",
+					"type": "Expression"
+				},
 				"fileSystem": "data"
 			},
 			"columnDelimiter": ",",
