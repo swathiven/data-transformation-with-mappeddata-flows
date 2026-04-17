@@ -31,6 +31,9 @@
 			"transformations": [
 				{
 					"name": "union1"
+				},
+				{
+					"name": "window1"
 				}
 			],
 			"scriptLines": [
@@ -55,6 +58,9 @@
 				"     ignoreNoFilesFound: false,",
 				"     wildcardPaths:[(concat('output/',$file2))]) ~> source2",
 				"source1, source2 union(byName: true)~> union1",
+				"source2 window(over(Customer_Name),",
+				"     asc({Total-orders-count}, true),",
+				"     count = count(Customer_Name)) ~> window1",
 				"union1 sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     input(",

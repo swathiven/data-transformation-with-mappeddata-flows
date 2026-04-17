@@ -29,7 +29,7 @@
 				},
 				{
 					"dataset": {
-						"referenceName": "ds_adls_targetfolder",
+						"referenceName": "ds_azuresqldb",
 						"type": "DatasetReference"
 					},
 					"name": "sink2"
@@ -50,6 +50,15 @@
 				},
 				{
 					"name": "derivedColumn1"
+				},
+				{
+					"name": "window2"
+				},
+				{
+					"name": "alterRow1"
+				},
+				{
+					"name": "filter1"
 				}
 			],
 			"scriptLines": [
@@ -100,6 +109,11 @@
 				"     disjoint: false) ~> SplitBasedOrders@(ordercount1, ordercount2)",
 				"select1 derive(Customer_Name = upper(Customer_Name),",
 				"          ordercategory = iif(Amount > 150, \"High\", \"Low\")) ~> derivedColumn1",
+				"Order window(over(CustomerID),",
+				"     desc(OrderDate, true),",
+				"     rank = rank()) ~> window2",
+				"Customer alterRow(deleteIf(equals(City,'Brisbane'))) ~> alterRow1",
+				"Customer filter(equals(City,'Brisbane')) ~> filter1",
 				"SplitBasedOrders@ordercount1 sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     input(",
@@ -117,22 +131,22 @@
 				"     skipDuplicateMapInputs: true,",
 				"     skipDuplicateMapOutputs: true,",
 				"     partitionBy('hash', 1)) ~> sink1",
-				" sink(allowSchemaDrift: true,",
+				"alterRow1 sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
-				"     input(",
-				"          {1} as string,",
-				"          {2} as string,",
-				"          {Quest Q64 10 FT. x 10 FT. Slant Leg Instant U} as string,",
-				"          Prop_3 as string,",
-				"          {59.98} as string,",
-				"          {http://images.acmesports.sports/Quest+Q64+10+FT.+x+10+FT.+Slant+Leg+Instant+Up+Canopy} as string",
-				"     ),",
-				"     partitionFileNames:['order2.csv'],",
-				"     umask: 0022,",
-				"     preCommands: [],",
-				"     postCommands: [],",
+				"     deletable:true,",
+				"     insertable:false,",
+				"     updateable:false,",
+				"     upsertable:true,",
+				"     keys:['CustomerID'],",
+				"     format: 'table',",
 				"     skipDuplicateMapInputs: true,",
 				"     skipDuplicateMapOutputs: true,",
+				"     errorHandlingOption: 'stopOnFirstError',",
+				"     mapColumn(",
+				"          CustomerID,",
+				"          Name,",
+				"          City",
+				"     ),",
 				"     partitionBy('hash', 1)) ~> sink2"
 			]
 		}
