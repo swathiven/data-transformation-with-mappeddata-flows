@@ -6,7 +6,7 @@
 			"type": "LinkedServiceReference"
 		},
 		"parameters": {
-			"filename": {
+			"DSfilename": {
 				"type": "string",
 				"defaultValue": "'order.csv'"
 			}
@@ -17,7 +17,7 @@
 			"location": {
 				"type": "AzureBlobFSLocation",
 				"fileName": {
-					"value": "@dataset().filename",
+					"value": "@dataset().DSfilename",
 					"type": "Expression"
 				},
 				"folderPath": "input",
