@@ -1,0 +1,52 @@
+{
+	"name": "pipeline6 validation schema",
+	"properties": {
+		"activities": [
+			{
+				"name": "Data flow1",
+				"type": "ExecuteDataFlow",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"dataflow": {
+						"referenceName": "dataflow_validation_schema",
+						"type": "DataFlowReference",
+						"datasetParameters": {
+							"source1": {
+								"DSfilename": {
+									"value": "@pipeline().parameters.PL_filename",
+									"type": "Expression"
+								},
+								"DSFolder": {
+									"value": "@pipeline().parameters.PL_foldername",
+									"type": "Expression"
+								}
+							}
+						}
+					},
+					"compute": {
+						"coreCount": 8,
+						"computeType": "General"
+					},
+					"traceLevel": "Fine"
+				}
+			}
+		],
+		"parameters": {
+			"PL_foldername": {
+				"type": "string"
+			},
+			"PL_filename": {
+				"type": "string"
+			}
+		},
+		"annotations": []
+	}
+}
